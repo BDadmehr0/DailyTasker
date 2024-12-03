@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>TODO</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>true</bool>
+  </property>
+  
+  <!-- Main Layout -->
+  <layout class="QVBoxLayout" name="mainLayout">
+  
+   <!-- Input Layout -->
+   <item>
+    <layout class="QHBoxLayout" name="inputLayout">
+     <item>
+      <widget class="QLineEdit" name="lineEdit">
+       <property name="maximumSize">
+        <size>
+         <width>379</width>
+         <height>32</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="addTaskButton">
+       <property name="text">
+        <string>Add Task</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   
+   <!-- Task List Layout -->
+   <item>
+    <layout class="QVBoxLayout" name="taskListLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Last Todo</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QListWidget" name="taskList"/>
+     </item>
+    </layout>
+   </item>
+   
+   <!-- Status ComboBox and Date Layout -->
+   <item>
+    <layout class="QHBoxLayout" name="statusLayout">
+     <item>
+      <widget class="QComboBox" name="filterBox">
+       <item>
+        <property name="text">
+         <string>Completed</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Pending</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Show Date to this Qlabel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   
+  </layout>
+
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
+
