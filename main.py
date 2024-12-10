@@ -58,7 +58,9 @@ class Ui_Dialog(object):
 
         # Create a settings button with a gear icon
         self.settingsButton = QtWidgets.QPushButton(self)
-        self.settingsButton.setIcon(QtGui.QIcon("./icons/setting_icon.png"))  # Path to the gear icon
+        self.settingsButton.setIcon(
+            QtGui.QIcon("./icons/setting_icon.png")
+        )  # Path to the gear icon
         self.settingsButton.setIconSize(QtCore.QSize(300, 300))
         self.settingsButton.setObjectName("settingsButton")
         self.settingsButton.clicked.connect(self.openSettingsMenu)
@@ -186,13 +188,17 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
                 # Set color based on status
                 if task["status"] == "Completed":
                     item.setBackground(QtGui.QColor("lightgreen"))  # Background color
-                    item.setForeground(QtGui.QColor("green"))  # Text color for Completed
+                    item.setForeground(
+                        QtGui.QColor("green")
+                    )  # Text color for Completed
                 elif task["status"] == "Pending":
                     item.setBackground(QtGui.QColor("lightyellow"))
                     item.setForeground(QtGui.QColor("orange"))  # Text color for Pending
 
                 self.taskList.addItem(item)
-                self.allTasks.append(item_text)  # Store task text without status for search
+                self.allTasks.append(
+                    item_text
+                )  # Store task text without status for search
 
     def loadTasksFromFile(self):
         try:
@@ -218,7 +224,9 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
         settings_layout.addWidget(theme_combobox)
 
         # Connect theme change
-        theme_combobox.currentIndexChanged.connect(lambda: self.changeTheme(theme_combobox.currentText()))
+        theme_combobox.currentIndexChanged.connect(
+            lambda: self.changeTheme(theme_combobox.currentText())
+        )
 
         settings_dialog.setLayout(settings_layout)
         settings_dialog.exec_()
@@ -252,7 +260,9 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
         light_palette.setColor(QtGui.QPalette.Window, QtCore.Qt.white)
         light_palette.setColor(QtGui.QPalette.WindowText, QtCore.Qt.black)
         light_palette.setColor(QtGui.QPalette.Base, QtCore.Qt.white)
-        light_palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(240, 240, 240))
+        light_palette.setColor(
+            QtGui.QPalette.AlternateBase, QtGui.QColor(240, 240, 240)
+        )
         light_palette.setColor(QtGui.QPalette.ToolTipBase, QtCore.Qt.white)
         light_palette.setColor(QtGui.QPalette.ToolTipText, QtCore.Qt.black)
         light_palette.setColor(QtGui.QPalette.Text, QtCore.Qt.black)
