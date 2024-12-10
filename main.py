@@ -56,6 +56,14 @@ class Ui_Dialog(object):
         self.statusLayout.addWidget(self.label_2)
         self.mainLayout.addLayout(self.statusLayout)
 
+        # Create a settings button with a gear icon
+        self.settingsButton = QtWidgets.QPushButton(self)
+        self.settingsButton.setIcon(QtGui.QIcon("./icons/setting_icon.png"))  # Path to the gear icon
+        self.settingsButton.setIconSize(QtCore.QSize(300, 300))
+        self.settingsButton.setObjectName("settingsButton")
+        self.settingsButton.clicked.connect(self.openSettingsMenu)
+        self.mainLayout.addWidget(self.settingsButton)
+
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -75,6 +83,7 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
         self.updateDateLabel()
         self.allTasks = []  # Store all tasks for search functionality
         self.loadTasks()  # Ensure tasks are loaded when the dialog is created
+        self.current_theme = "Light"  # Default theme
 
     def setupFunctions(self):
         self.addTaskButton.clicked.connect(self.addTask)
@@ -99,8 +108,11 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
                 tasks[current_date] = []
 
             tasks[current_date].append({"text": task_text, "status": "Pending"})
+
             self.saveTasksToFile(tasks)
-            self.loadTasks()  # Reload tasks after adding
+
+            self.loadTasks()
+
             self.lineEdit.clear()
 
     def updateStatusComboBox(self, item):
@@ -126,12 +138,39 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 
             if current_date in tasks:
                 selected_task_text = selected_item.text()
+
                 for task in tasks[current_date]:
                     if task["text"] == selected_task_text:
-                        # Update the status based on the ComboBox
                         task["status"] = self.statusComboBox.currentText()
                         self.saveTasksToFile(tasks)
+
+                        updated_text = task["text"]
+                        selected_item.setText(updated_text)
+
+                        if task["status"] == "Completed":
+                            selected_item.setForeground(QtGui.QColor("green"))
+                            selected_item.setBackground(QtGui.QColor("lightgreen"))
+                        elif task["status"] == "Pending":
+                            selected_item.setForeground(QtGui.QColor("orange"))
+                            selected_item.setBackground(QtGui.QColor("lightyellow"))
                         break
+
+    def searchTasks(self):
+        query = self.searchBar.text().strip().lower()
+        self.taskList.clear()  # Clear the task list
+
+        tasks = self.loadTasksFromFile()
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        if current_date in tasks:
+            for task in tasks[current_date]:
+                task_text = task["text"]
+                if query in task_text.lower():
+                    item = QtWidgets.QListWidgetItem(task_text)
+                    if task["status"] == "Completed":
+                        item.setBackground(QtGui.QColor("lightgreen"))
+                    elif task["status"] == "Pending":
+                        item.setBackground(QtGui.QColor("lightyellow"))
+                    self.taskList.addItem(item)
 
     def loadTasks(self):
         tasks = self.loadTasksFromFile()
@@ -141,17 +180,19 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
         current_date = datetime.now().strftime("%Y-%m-%d")
         if current_date in tasks:
             for task in tasks[current_date]:
-                self.taskList.addItem(task["text"])
-                self.allTasks.append(task["text"])  # Store task for search
+                item_text = task["text"]  # Only the task text, without the status
+                item = QtWidgets.QListWidgetItem(item_text)
 
-    def searchTasks(self):
-        query = self.searchBar.text().strip().lower()
-        self.taskList.clear()  # Clear the task list
+                # Set color based on status
+                if task["status"] == "Completed":
+                    item.setBackground(QtGui.QColor("lightgreen"))  # Background color
+                    item.setForeground(QtGui.QColor("green"))  # Text color for Completed
+                elif task["status"] == "Pending":
+                    item.setBackground(QtGui.QColor("lightyellow"))
+                    item.setForeground(QtGui.QColor("orange"))  # Text color for Pending
 
-        # Filter tasks that match the search query
-        for task in self.allTasks:
-            if query in task.lower():
-                self.taskList.addItem(task)
+                self.taskList.addItem(item)
+                self.allTasks.append(item_text)  # Store task text without status for search
 
     def loadTasksFromFile(self):
         try:
@@ -163,6 +204,64 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
     def saveTasksToFile(self, tasks):
         with open("tasks.json", "w") as file:
             json.dump(tasks, file, indent=4)
+
+    def openSettingsMenu(self):
+        settings_dialog = QtWidgets.QDialog(self)
+        settings_dialog.setWindowTitle("Settings")
+        settings_layout = QtWidgets.QVBoxLayout(settings_dialog)
+
+        # Add a dropdown to choose between Dark and Light mode
+        theme_combobox = QtWidgets.QComboBox(settings_dialog)
+        theme_combobox.addItem("Light Mode")
+        theme_combobox.addItem("Dark Mode")
+        theme_combobox.setCurrentText(self.current_theme)
+        settings_layout.addWidget(theme_combobox)
+
+        # Connect theme change
+        theme_combobox.currentIndexChanged.connect(lambda: self.changeTheme(theme_combobox.currentText()))
+
+        settings_dialog.setLayout(settings_layout)
+        settings_dialog.exec_()
+
+    def changeTheme(self, selected_theme):
+        if selected_theme == "Dark Mode":
+            self.setDarkMode()
+            self.current_theme = "Dark"
+        else:
+            self.setLightMode()
+            self.current_theme = "Light"
+
+    def setDarkMode(self):
+        dark_palette = QtGui.QPalette()
+        dark_palette.setColor(QtGui.QPalette.Window, QtGui.QColor(53, 53, 53))
+        dark_palette.setColor(QtGui.QPalette.WindowText, QtCore.Qt.white)
+        dark_palette.setColor(QtGui.QPalette.Base, QtGui.QColor(42, 42, 42))
+        dark_palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(66, 66, 66))
+        dark_palette.setColor(QtGui.QPalette.ToolTipBase, QtCore.Qt.white)
+        dark_palette.setColor(QtGui.QPalette.ToolTipText, QtCore.Qt.white)
+        dark_palette.setColor(QtGui.QPalette.Text, QtCore.Qt.white)
+        dark_palette.setColor(QtGui.QPalette.Button, QtGui.QColor(53, 53, 53))
+        dark_palette.setColor(QtGui.QPalette.ButtonText, QtCore.Qt.white)
+        dark_palette.setColor(QtGui.QPalette.BrightText, QtCore.Qt.red)
+        dark_palette.setColor(QtGui.QPalette.Link, QtGui.QColor(42, 130, 218))
+
+        self.setPalette(dark_palette)
+
+    def setLightMode(self):
+        light_palette = QtGui.QPalette()
+        light_palette.setColor(QtGui.QPalette.Window, QtCore.Qt.white)
+        light_palette.setColor(QtGui.QPalette.WindowText, QtCore.Qt.black)
+        light_palette.setColor(QtGui.QPalette.Base, QtCore.Qt.white)
+        light_palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(240, 240, 240))
+        light_palette.setColor(QtGui.QPalette.ToolTipBase, QtCore.Qt.white)
+        light_palette.setColor(QtGui.QPalette.ToolTipText, QtCore.Qt.black)
+        light_palette.setColor(QtGui.QPalette.Text, QtCore.Qt.black)
+        light_palette.setColor(QtGui.QPalette.Button, QtCore.Qt.white)
+        light_palette.setColor(QtGui.QPalette.ButtonText, QtCore.Qt.black)
+        light_palette.setColor(QtGui.QPalette.BrightText, QtCore.Qt.red)
+        light_palette.setColor(QtGui.QPalette.Link, QtGui.QColor(42, 130, 218))
+
+        self.setPalette(light_palette)
 
 
 if __name__ == "__main__":
