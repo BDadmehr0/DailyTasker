@@ -15,6 +15,15 @@ class Ui_Dialog(object):
         # Main Layout
         self.mainLayout = QtWidgets.QVBoxLayout(Dialog)
 
+        # Search Bar Layout
+        self.searchBar = QtWidgets.QLineEdit()
+        self.searchBar.setPlaceholderText("Search tasks...")
+        self.searchBar.setObjectName("searchBar")
+
+        # Add Clear Button to Search Bar
+        self.searchBar.setClearButtonEnabled(True)
+        self.mainLayout.addWidget(self.searchBar)
+
         # Layout for task input
         self.inputLayout = QtWidgets.QHBoxLayout()
         self.lineEdit = QtWidgets.QLineEdit()
@@ -64,12 +73,14 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
         self.setupUi(self)
         self.setupFunctions()
         self.updateDateLabel()
-        self.loadTasks()
+        self.allTasks = []  # Store all tasks for search functionality
+        self.loadTasks()  # Ensure tasks are loaded when the dialog is created
 
     def setupFunctions(self):
         self.addTaskButton.clicked.connect(self.addTask)
         self.taskList.itemClicked.connect(self.updateStatusComboBox)
         self.statusComboBox.currentIndexChanged.connect(self.changeTaskStatus)
+        self.searchBar.textChanged.connect(self.searchTasks)
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.updateDateLabel)
         self.timer.start(1000)
@@ -89,7 +100,7 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 
             tasks[current_date].append({"text": task_text, "status": "Pending"})
             self.saveTasksToFile(tasks)
-            self.loadTasks()
+            self.loadTasks()  # Reload tasks after adding
             self.lineEdit.clear()
 
     def updateStatusComboBox(self, item):
@@ -125,11 +136,22 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
     def loadTasks(self):
         tasks = self.loadTasksFromFile()
         self.taskList.clear()
+        self.allTasks = []  # Clear previous tasks for search
 
         current_date = datetime.now().strftime("%Y-%m-%d")
         if current_date in tasks:
             for task in tasks[current_date]:
                 self.taskList.addItem(task["text"])
+                self.allTasks.append(task["text"])  # Store task for search
+
+    def searchTasks(self):
+        query = self.searchBar.text().strip().lower()
+        self.taskList.clear()  # Clear the task list
+
+        # Filter tasks that match the search query
+        for task in self.allTasks:
+            if query in task.lower():
+                self.taskList.addItem(task)
 
     def loadTasksFromFile(self):
         try:
