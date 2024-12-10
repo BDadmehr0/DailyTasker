@@ -99,8 +99,11 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
                 tasks[current_date] = []
 
             tasks[current_date].append({"text": task_text, "status": "Pending"})
+
             self.saveTasksToFile(tasks)
-            self.loadTasks()  # Reload tasks after adding
+
+            self.loadTasks()  
+
             self.lineEdit.clear()
 
     def updateStatusComboBox(self, item):
@@ -126,12 +129,42 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 
             if current_date in tasks:
                 selected_task_text = selected_item.text()
+
                 for task in tasks[current_date]:
                     if task["text"] == selected_task_text:
-                        # Update the status based on the ComboBox
                         task["status"] = self.statusComboBox.currentText()
                         self.saveTasksToFile(tasks)
+
+                        updated_text = task["text"]
+                        selected_item.setText(updated_text)
+
+                        if task["status"] == "Completed":
+                            selected_item.setForeground(QtGui.QColor("green"))
+                            selected_item.setBackground(QtGui.QColor("lightgreen"))
+                        elif task["status"] == "Pending":
+                            selected_item.setForeground(QtGui.QColor("orange"))
+                            selected_item.setBackground(QtGui.QColor("lightyellow"))
                         break
+
+
+
+
+    def searchTasks(self):
+        query = self.searchBar.text().strip().lower()
+        self.taskList.clear()  # Clear the task list
+
+        tasks = self.loadTasksFromFile()
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        if current_date in tasks:
+            for task in tasks[current_date]:
+                task_text = task["text"]
+                if query in task_text.lower():
+                    item = QtWidgets.QListWidgetItem(task_text)
+                    if task["status"] == "Completed":
+                        item.setBackground(QtGui.QColor("lightgreen"))
+                    elif task["status"] == "Pending":
+                        item.setBackground(QtGui.QColor("lightyellow"))
+                    self.taskList.addItem(item)
 
     def loadTasks(self):
         tasks = self.loadTasksFromFile()
@@ -141,17 +174,19 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
         current_date = datetime.now().strftime("%Y-%m-%d")
         if current_date in tasks:
             for task in tasks[current_date]:
-                self.taskList.addItem(task["text"])
-                self.allTasks.append(task["text"])  # Store task for search
+                item_text = task["text"]  # Only the task text, without the status
+                item = QtWidgets.QListWidgetItem(item_text)
 
-    def searchTasks(self):
-        query = self.searchBar.text().strip().lower()
-        self.taskList.clear()  # Clear the task list
+                # Set color based on status
+                if task["status"] == "Completed":
+                    item.setBackground(QtGui.QColor("lightgreen"))  # Background color
+                    item.setForeground(QtGui.QColor("green"))  # Text color for Completed
+                elif task["status"] == "Pending":
+                    item.setBackground(QtGui.QColor("lightyellow"))
+                    item.setForeground(QtGui.QColor("orange"))  # Text color for Pending
 
-        # Filter tasks that match the search query
-        for task in self.allTasks:
-            if query in task.lower():
-                self.taskList.addItem(task)
+                self.taskList.addItem(item)
+                self.allTasks.append(item_text)  # Store task text without status for search
 
     def loadTasksFromFile(self):
         try:
@@ -168,5 +203,6 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = MainApp()
-    window.show()
+    # window.showFullScreen()
     sys.exit(app.exec_())
+
