@@ -15,12 +15,50 @@ class Ui_Dialog(object):
         # Main Layout
         self.mainLayout = QtWidgets.QVBoxLayout(Dialog)
 
+        # Layout for header (with settings button at the top-right)
+        self.headerLayout = QtWidgets.QHBoxLayout()
+
+        # Add an empty space before the settings button to push it to the right
+        self.headerLayout.addStretch(1)
+
+        # Create the settings button
+        self.settingsButton = QtWidgets.QPushButton(self)
+        self.settingsButton.setIcon(
+            QtGui.QIcon("./icons/setting_icon.png")
+        )  # Path to the gear icon
+        self.settingsButton.setIconSize(QtCore.QSize(30, 30))  # Smaller icon size
+
+        # Make the settings button circular
+        self.settingsButton.setStyleSheet("""
+            QPushButton {
+                border-radius: 25px; 
+                background-color: #f0f0f0;
+                border: none;
+            }
+            QPushButton:hover {
+                background-color: #e0e0e0;
+            }
+        """)
+
+        self.settingsButton.setFixedSize(50, 50)  # Set the button size
+        self.settingsButton.clicked.connect(self.openSettingsMenu)
+        self.headerLayout.addWidget(self.settingsButton)
+
+        # Add header layout to the main layout
+        self.mainLayout.addLayout(self.headerLayout)
+
+        # Add a thin line under the header
+        self.headerLine = QtWidgets.QFrame(Dialog)
+        self.headerLine.setFrameShape(QtWidgets.QFrame.HLine)
+        self.headerLine.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.mainLayout.addWidget(self.headerLine)
+
+        # Continue with the rest of the UI setup...
+
         # Search Bar Layout
         self.searchBar = QtWidgets.QLineEdit()
         self.searchBar.setPlaceholderText("Search tasks...")
         self.searchBar.setObjectName("searchBar")
-
-        # Add Clear Button to Search Bar
         self.searchBar.setClearButtonEnabled(True)
         self.mainLayout.addWidget(self.searchBar)
 
@@ -56,18 +94,10 @@ class Ui_Dialog(object):
         self.statusLayout.addWidget(self.label_2)
         self.mainLayout.addLayout(self.statusLayout)
 
-        # Create a settings button with a gear icon
-        self.settingsButton = QtWidgets.QPushButton(self)
-        self.settingsButton.setIcon(
-            QtGui.QIcon("./icons/setting_icon.png")
-        )  # Path to the gear icon
-        self.settingsButton.setIconSize(QtCore.QSize(300, 300))
-        self.settingsButton.setObjectName("settingsButton")
-        self.settingsButton.clicked.connect(self.openSettingsMenu)
-        self.mainLayout.addWidget(self.settingsButton)
-
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
+
+
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
