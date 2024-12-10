@@ -36,7 +36,8 @@ class Ui_Dialog(object):
         self.settingsButton.setIconSize(QtCore.QSize(90, 90))  # Smaller icon size
 
         # Make the settings button circular
-        self.settingsButton.setStyleSheet("""
+        self.settingsButton.setStyleSheet(
+            """
             QPushButton {
                 border-radius: 25px; 
                 background-color: #f0f0f0;
@@ -45,7 +46,8 @@ class Ui_Dialog(object):
             QPushButton:hover {
                 background-color: #e0e0e0;
             }
-        """)
+        """
+        )
 
         self.settingsButton.setFixedSize(50, 50)  # Set the button size
         self.settingsButton.clicked.connect(self.openSettingsMenu)
@@ -63,7 +65,7 @@ class Ui_Dialog(object):
         self.mainLayout.addWidget(self.headerLine)
 
         # Continue with the rest of the UI setup...
-        
+
         self.inputLayout = QtWidgets.QHBoxLayout()
         self.lineEdit = QtWidgets.QLineEdit()
         self.lineEdit.setObjectName("lineEdit")
@@ -106,8 +108,6 @@ class Ui_Dialog(object):
         else:
             super().keyPressEvent(event)  # Allow other key presses to pass through
 
-
-
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "TODO"))
@@ -127,23 +127,23 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
             "Light": {
                 "Pending": {
                     "background": QtGui.QColor("lightyellow"),
-                    "foreground": QtGui.QColor("orange")
+                    "foreground": QtGui.QColor("orange"),
                 },
                 "Completed": {
                     "background": QtGui.QColor("lightgreen"),
-                    "foreground": QtGui.QColor("green")
-                }
+                    "foreground": QtGui.QColor("green"),
+                },
             },
             "Dark": {
                 "Pending": {
                     "background": QtGui.QColor(66, 66, 66),
-                    "foreground": QtGui.QColor(255, 165, 0)  # Orange
+                    "foreground": QtGui.QColor(255, 165, 0),  # Orange
                 },
                 "Completed": {
                     "background": QtGui.QColor(34, 139, 34),  # Dark green
-                    "foreground": QtGui.QColor(144, 238, 144)  # Light green
-                }
-            }
+                    "foreground": QtGui.QColor(144, 238, 144),  # Light green
+                },
+            },
         }
 
         self.setupFunctions()  # Initialize functions after setting the theme
@@ -197,7 +197,9 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
         light_palette.setColor(QtGui.QPalette.Window, QtCore.Qt.white)
         light_palette.setColor(QtGui.QPalette.WindowText, QtCore.Qt.black)
         light_palette.setColor(QtGui.QPalette.Base, QtCore.Qt.white)
-        light_palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(240, 240, 240))
+        light_palette.setColor(
+            QtGui.QPalette.AlternateBase, QtGui.QColor(240, 240, 240)
+        )
         light_palette.setColor(QtGui.QPalette.ToolTipBase, QtCore.Qt.white)
         light_palette.setColor(QtGui.QPalette.ToolTipText, QtCore.Qt.black)
         light_palette.setColor(QtGui.QPalette.Text, QtCore.Qt.black)
@@ -210,7 +212,6 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 
         # Update task list colors for light mode
         self.loadTasks()  # Reload tasks with new color scheme
-
 
     def changeTheme(self, selected_theme):
         if selected_theme == "Dark Mode":
@@ -239,7 +240,9 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
             # Prevent Enter key from triggering settings button
             event.accept()  # Consume the event and stop it from propagating further
         else:
-            super(MainApp, self).keyPressEvent(event)  # Allow other key presses to pass through
+            super(MainApp, self).keyPressEvent(
+                event
+            )  # Allow other key presses to pass through
 
     def addTask(self):
         task_text = self.lineEdit.text().strip()
@@ -272,11 +275,9 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
                     else:
                         self.statusComboBox.setCurrentIndex(0)
                     break
-                    
+
         # بروزرسانی رنگ تسک انتخاب شده
         self.updateTaskColor(item)  # فراخوانی متد به‌روز رسانی رنگ
-
-
 
     def changeTaskStatus(self):
         selected_item = self.taskList.currentItem()
@@ -296,7 +297,9 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
                         selected_item.setText(updated_text)
 
                         # Update item color based on status and current theme
-                        self.updateTaskColor(selected_item, task)  # Update color for the selected item
+                        self.updateTaskColor(
+                            selected_item, task
+                        )  # Update color for the selected item
 
                         break
 
@@ -316,13 +319,11 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 
         # اگر تسک مشخص شده باشد، وضعیت آن را می‌گیریم
         status = task["status"] if task else "Pending"
-        
+
         # دریافت رنگ‌ها از پالت رنگ‌ها بر اساس وضعیت و تم فعلی
         colors = self.theme_colors[self.current_theme][status]
         item.setBackground(colors["background"])
         item.setForeground(colors["foreground"])
-
-
 
     def searchTasks(self):
         query = self.searchBar.text().strip().lower()
@@ -370,7 +371,6 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 
         settings_dialog.setLayout(settings_layout)
         settings_dialog.exec_()
-
 
 
 if __name__ == "__main__":
