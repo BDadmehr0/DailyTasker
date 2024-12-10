@@ -325,9 +325,13 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
         item.setBackground(colors["background"])
         item.setForeground(colors["foreground"])
 
-    def searchTasks(self):
-        query = self.searchBar.text().strip().lower()
-        self.taskList.clear()  # Clear the task list
+                # Set color based on status
+                if task["status"] == "Completed":
+                    item.setBackground(QtGui.QColor("lightgreen"))  # Background color
+                    item.setForeground(QtGui.QColor("green"))  # Text color for Completed
+                elif task["status"] == "Pending":
+                    item.setBackground(QtGui.QColor("lightyellow"))
+                    item.setForeground(QtGui.QColor("orange"))  # Text color for Pending
 
         tasks = self.loadTasksFromFile()
         current_date = datetime.now().strftime("%Y-%m-%d")
@@ -340,6 +344,7 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
                     item.setBackground(colors["background"])
                     item.setForeground(colors["foreground"])
                     self.taskList.addItem(item)
+
 
     def loadTasksFromFile(self):
         try:
@@ -376,5 +381,6 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = MainApp()
-    window.show()
+    # window.showFullScreen()
     sys.exit(app.exec_())
+
