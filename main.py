@@ -313,25 +313,23 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
             tasks = self.loadTasksFromFile()
             if current_date in tasks:
                 selected_task_text = item.text()
-                for task in tasks[current_date]:
-                    if task["text"] == selected_task_text:
+                for t in tasks[current_date]:
+                    if t["text"] == selected_task_text:
+                        task = t
                         break
 
         # اگر تسک مشخص شده باشد، وضعیت آن را می‌گیریم
-        status = task["status"] if task else "Pending"
+        if task:
+            status = task["status"]
+            # دریافت رنگ‌ها از پالت رنگ‌ها بر اساس وضعیت و تم فعلی
+            colors = self.theme_colors[self.current_theme][status]
+            item.setBackground(colors["background"])
+            item.setForeground(colors["foreground"])
 
-        # دریافت رنگ‌ها از پالت رنگ‌ها بر اساس وضعیت و تم فعلی
-        colors = self.theme_colors[self.current_theme][status]
-        item.setBackground(colors["background"])
-        item.setForeground(colors["foreground"])
 
-                # Set color based on status
-                if task["status"] == "Completed":
-                    item.setBackground(QtGui.QColor("lightgreen"))  # Background color
-                    item.setForeground(QtGui.QColor("green"))  # Text color for Completed
-                elif task["status"] == "Pending":
-                    item.setBackground(QtGui.QColor("lightyellow"))
-                    item.setForeground(QtGui.QColor("orange"))  # Text color for Pending
+    def searchTasks(self):
+        query = self.searchBar.text().strip().lower()
+        self.taskList.clear()  # Clear the task list
 
         tasks = self.loadTasksFromFile()
         current_date = datetime.now().strftime("%Y-%m-%d")
@@ -340,12 +338,13 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
                 task_text = task["text"]
                 if query in task_text.lower():
                     item = QtWidgets.QListWidgetItem(task_text)
+                    # تنظیم رنگ بر اساس وضعیت
                     colors = self.theme_colors[self.current_theme][task["status"]]
                     item.setBackground(colors["background"])
                     item.setForeground(colors["foreground"])
                     self.taskList.addItem(item)
 
-
+                        
     def loadTasksFromFile(self):
         try:
             with open("tasks.json", "r") as file:
@@ -381,6 +380,6 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = MainApp()
-    # window.showFullScreen()
+    window.show()  # نمایش پنجره
     sys.exit(app.exec_())
 
