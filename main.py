@@ -269,15 +269,15 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
             selected_task_text = item.text()
             for task in tasks[current_date]:
                 if task["text"] == selected_task_text:
-                    # تنظیم ComboBox بر اساس وضعیت تسک
+                    # Setting ComboBox based on task status
                     if task["status"] == "Completed":
                         self.statusComboBox.setCurrentIndex(1)
                     else:
                         self.statusComboBox.setCurrentIndex(0)
                     break
 
-        # بروزرسانی رنگ تسک انتخاب شده
-        self.updateTaskColor(item)  # فراخوانی متد به‌روز رسانی رنگ
+        # Update the color of the selected task.
+        self.updateTaskColor(item)  # Calling the color update method
 
     def changeTaskStatus(self):
         selected_item = self.taskList.currentItem()
@@ -305,10 +305,10 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 
     def updateTaskColor(self, item, task=None):
         """
-        به‌روزرسانی رنگ تسک بر اساس وضعیت و تم فعلی.
+        Update task color based on current status and theme.
         """
         if task is None:
-            # اگر تسک به صورت مشخص وارد نشده باشد، آن را از لیست بارگذاری می‌کنیم
+            # If the task is not entered specifically, we load it from the list.
             current_date = datetime.now().strftime("%Y-%m-%d")
             tasks = self.loadTasksFromFile()
             if current_date in tasks:
@@ -318,10 +318,10 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
                         task = t
                         break
 
-        # اگر تسک مشخص شده باشد، وضعیت آن را می‌گیریم
+        # If the task is specified, we get its status.
         if task:
             status = task["status"]
-            # دریافت رنگ‌ها از پالت رنگ‌ها بر اساس وضعیت و تم فعلی
+            # Get colors from the color palette based on the current status and theme
             colors = self.theme_colors[self.current_theme][status]
             item.setBackground(colors["background"])
             item.setForeground(colors["foreground"])
@@ -337,7 +337,7 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
                 task_text = task["text"]
                 if query in task_text.lower():
                     item = QtWidgets.QListWidgetItem(task_text)
-                    # تنظیم رنگ بر اساس وضعیت
+                    # Adjust color based on situation
                     colors = self.theme_colors[self.current_theme][task["status"]]
                     item.setBackground(colors["background"])
                     item.setForeground(colors["foreground"])
@@ -378,5 +378,5 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = MainApp()
-    window.show()  # نمایش پنجره
+    window.show()  # Window display
     sys.exit(app.exec_())
