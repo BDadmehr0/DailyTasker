@@ -326,7 +326,6 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
             item.setBackground(colors["background"])
             item.setForeground(colors["foreground"])
 
-
     def searchTasks(self):
         query = self.searchBar.text().strip().lower()
         self.taskList.clear()  # Clear the task list
@@ -344,7 +343,6 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
                     item.setForeground(colors["foreground"])
                     self.taskList.addItem(item)
 
-                        
     def loadTasksFromFile(self):
         try:
             with open("tasks.json", "r") as file:
@@ -382,4 +380,3 @@ if __name__ == "__main__":
     window = MainApp()
     window.show()  # نمایش پنجره
     sys.exit(app.exec_())
-
