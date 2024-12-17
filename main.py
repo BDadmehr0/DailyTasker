@@ -253,6 +253,12 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
             if current_date not in tasks:
                 tasks[current_date] = []
 
+            if any(task["text"] == task_text for task in tasks[current_date]):
+                QtWidgets.QMessageBox.warning(
+                    self, "Error", "This task has already been added for today."
+                )
+                return
+
             tasks[current_date].append({"text": task_text, "status": "Pending"})
 
             self.saveTasksToFile(tasks)
