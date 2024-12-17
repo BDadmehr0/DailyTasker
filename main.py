@@ -1,5 +1,7 @@
 import json
 import sys
+import platform
+import os
 from datetime import datetime
 
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -122,6 +124,9 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
         self.setupUi(self)
         self.current_theme = "Light"  # Default theme
 
+        # Set the tasks file path
+        self.tasks_file = self.get_tasks_file_path()
+
         # Define colors for each theme and task status
         self.theme_colors = {
             "Light": {
@@ -150,6 +155,34 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
         self.updateDateLabel()
         self.allTasks = []  # Store all tasks for search functionality
         self.loadTasks()  # Ensure tasks are loaded when the dialog is created
+
+
+    def get_tasks_file_path(self):
+        """
+        Returns the appropriate path for tasks.json based on the operating system.
+        """
+        app_name = "DailyTasker"  # Application name
+        system = platform.system()  # Detect operating system
+
+        if system == "Windows":
+            base_path = os.getenv("APPDATA", os.path.expanduser("~\\AppData\\Roaming"))
+        elif system == "Darwin":  # macOS
+            base_path = os.path.expanduser("~/Library/Application Support")
+        elif system == "Linux":
+            base_path = os.path.expanduser("~/.config")
+        else:
+            base_path = os.path.expanduser("~")  # Default to home directory
+
+        # Final directory for the application
+        app_directory = os.path.join(base_path, app_name)
+
+        # Create the directory if it doesn't exist
+        os.makedirs(app_directory, exist_ok=True)
+
+        # Return the full path to tasks.json
+        return os.path.join(app_directory, "tasks.json")
+
+
 
     def loadTasks(self):
         tasks = self.loadTasksFromFile()
@@ -350,14 +383,20 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
                     self.taskList.addItem(item)
 
     def loadTasksFromFile(self):
+        """
+        Load tasks from JSON file.
+        """
         try:
-            with open("tasks.json", "r") as file:
+            with open(self.tasks_file, "r") as file:
                 return json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
             return {}
 
     def saveTasksToFile(self, tasks):
-        with open("tasks.json", "w") as file:
+        """
+        Save tasks to JSON file.
+        """
+        with open(self.tasks_file, "w") as file:
             json.dump(tasks, file, indent=4)
 
     def openSettingsMenu(self):
@@ -365,19 +404,14 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
         settings_dialog.setWindowTitle("Settings")
         settings_layout = QtWidgets.QVBoxLayout(settings_dialog)
 
-        # Add a dropdown to choose between Dark and Light mode
-        theme_combobox = QtWidgets.QComboBox(settings_dialog)
-        theme_combobox.addItem("Light Mode")
-        theme_combobox.addItem("Dark Mode")
+        theme_combobox = QtWidgets.QComboBox()
+        theme_combobox.addItems(["Light Mode", "Dark Mode"])
         theme_combobox.setCurrentText(self.current_theme)
-        settings_layout.addWidget(theme_combobox)
-
-        # Connect theme change
         theme_combobox.currentIndexChanged.connect(
             lambda: self.changeTheme(theme_combobox.currentText())
         )
 
-        settings_dialog.setLayout(settings_layout)
+        settings_layout.addWidget(theme_combobox)
         settings_dialog.exec_()
 
 
