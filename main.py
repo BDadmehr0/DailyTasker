@@ -254,6 +254,8 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
             self.setLightMode()
             self.current_theme = "Light"
 
+        self.updateTaskColors()
+
     def setupFunctions(self):
         self.addTaskButton.clicked.connect(self.addTask)
         self.taskList.itemClicked.connect(self.updateStatusComboBox)
@@ -266,6 +268,26 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
     def updateDateLabel(self):
         current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.label_2.setText(current_date)
+
+    def updateTaskColors(self):
+        """
+        Update colors of all tasks in the task list based on the current theme and their status.
+        """
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        tasks = self.loadTasksFromFile()
+
+        if current_date in tasks:
+            for index in range(self.taskList.count()):
+                item = self.taskList.item(index)
+                task_text = item.text()
+                for task in tasks[current_date]:
+                    if task["text"] == task_text:
+                        # Update color based on task status and theme
+                        status = task["status"]
+                        colors = self.theme_colors[self.current_theme][status]
+                        item.setBackground(colors["background"])
+                        item.setForeground(colors["foreground"])
+
 
     def keyPressEvent(self, event):
         # Detect Enter key press and prevent it from triggering settings button click
