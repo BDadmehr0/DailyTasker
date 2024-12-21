@@ -222,8 +222,14 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 
         self.setPalette(dark_palette)
 
-        # Update task list colors for dark mode
-        self.loadTasks()  # Reload tasks with new color scheme
+        # Adjust styles for UI elements
+        self.searchBar.setStyleSheet("background-color: #333333; color: white; padding: 5px;")
+        self.addTaskButton.setStyleSheet("background-color: #444444; color: white;")
+        self.statusComboBox.setStyleSheet("background-color: #444444; color: white;")
+
+        # Reload task list with updated color scheme
+        self.loadTasks()
+
 
     def setLightMode(self):
         light_palette = QtGui.QPalette()
