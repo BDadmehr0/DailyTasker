@@ -142,11 +142,11 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
             "Dark": {
                 "Pending": {
                     "background": QtGui.QColor(66, 66, 66),
-                    "foreground": QtGui.QColor(255, 255, 255),  # Orange
+                    "foreground": QtGui.QColor(255, 255, 255),  # White
                 },
                 "Completed": {
                     "background": QtGui.QColor(34, 139, 34),  # Dark green
-                    "foreground": QtGui.QColor(255, 255, 255),  # Light green
+                    "foreground": QtGui.QColor(255, 255, 255),  # White
                 },
             },
         }
