@@ -17,98 +17,101 @@ class Ui_Dialog(object):
         # Main Layout
         self.mainLayout = QtWidgets.QVBoxLayout(Dialog)
 
-        # Layout for header (with search bar on the left and settings button on the right)
-        self.headerLayout = QtWidgets.QHBoxLayout()
-
-        # Create the search bar and add it to the header layout (left side)
-        self.searchBar = QtWidgets.QLineEdit()
-        self.searchBar.setPlaceholderText("Search tasks...")
-        self.searchBar.setObjectName("searchBar")
-        self.searchBar.setClearButtonEnabled(True)
-        self.headerLayout.addWidget(self.searchBar)
-
-        # Add a stretch to push the settings button to the right
-        self.headerLayout.addStretch(1)
-
-        # Create the settings button (right side)
-        self.settingsButton = QtWidgets.QPushButton(self)
-        self.settingsButton.setIcon(
-            QtGui.QIcon("./icons/setting_icon.png")
-        )  # Path to the gear icon
-        self.settingsButton.setIconSize(QtCore.QSize(90, 90))  # Smaller icon size
-
-        # Make the settings button circular
-        self.settingsButton.setStyleSheet(
-            """
-            QPushButton {
-                border-radius: 25px; 
-                background-color: #f0f0f0;
-                border: none;
-            }
-            QPushButton:hover {
-                background-color: #e0e0e0;
-            }
-        """
-        )
-
-        self.settingsButton.setFixedSize(50, 50)  # Set the button size
-        self.settingsButton.clicked.connect(self.openSettingsMenu)
-
-        # Add settings button to header layout (right side)
-        self.headerLayout.addWidget(self.settingsButton)
-
-        # Add header layout to the main layout
+        # Header Layout
+        self.headerLayout = self._createHeaderLayout()
         self.mainLayout.addLayout(self.headerLayout)
 
-        # Add a thin line under the header
+        # Thin line under the header
         self.headerLine = QtWidgets.QFrame(Dialog)
         self.headerLine.setFrameShape(QtWidgets.QFrame.HLine)
         self.headerLine.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.mainLayout.addWidget(self.headerLine)
 
-        # Continue with the rest of the UI setup...
-
-        self.inputLayout = QtWidgets.QHBoxLayout()
-        self.lineEdit = QtWidgets.QLineEdit()
-        self.lineEdit.setObjectName("lineEdit")
-        self.inputLayout.addWidget(self.lineEdit)
-        self.addTaskButton = QtWidgets.QPushButton()
-        self.addTaskButton.setObjectName("addTaskButton")
-        self.inputLayout.addWidget(self.addTaskButton)
+        # Input Layout for Task
+        self.inputLayout = self._createInputLayout()
         self.mainLayout.addLayout(self.inputLayout)
 
-        # Task list layout
-        self.taskListLayout = QtWidgets.QVBoxLayout()
-        self.label = QtWidgets.QLabel()
-        self.label.setObjectName("label")
-        self.taskListLayout.addWidget(self.label)
-        self.taskList = QtWidgets.QListWidget()
-        self.taskList.setObjectName("taskList")
-        self.taskListLayout.addWidget(self.taskList)
+        # Task List Layout
+        self.taskListLayout = self._createTaskListLayout()
         self.mainLayout.addLayout(self.taskListLayout)
 
-        # Status and date layout
-        self.statusLayout = QtWidgets.QHBoxLayout()
-        self.statusComboBox = QtWidgets.QComboBox()
-        self.statusComboBox.setObjectName("statusComboBox")
-        self.statusComboBox.addItem("Pending")
-        self.statusComboBox.addItem("Completed")
-        self.statusLayout.addWidget(self.statusComboBox)
-        self.label_2 = QtWidgets.QLabel()
-        self.label_2.setObjectName("label_2")
-        self.statusLayout.addWidget(self.label_2)
+        # Status Layout
+        self.statusLayout = self._createStatusLayout()
         self.mainLayout.addLayout(self.statusLayout)
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
+    def _createHeaderLayout(self):
+        headerLayout = QtWidgets.QHBoxLayout()
+
+        # Search Bar
+        self.searchBar = QtWidgets.QLineEdit()
+        self.searchBar.setPlaceholderText("Search tasks...")
+        self.searchBar.setObjectName("searchBar")
+        self.searchBar.setClearButtonEnabled(True)
+        headerLayout.addWidget(self.searchBar)
+
+        # Add Stretch
+        headerLayout.addStretch(1)
+
+        # Settings Button
+        self.settingsButton = self._createSettingsButton()
+        headerLayout.addWidget(self.settingsButton)
+
+        return headerLayout
+
+    def _createSettingsButton(self):
+        settingsButton = QtWidgets.QPushButton(self)
+        settingsButton.setIcon(QtGui.QIcon("./icons/setting_icon.png"))
+        settingsButton.setIconSize(QtCore.QSize(90, 90))
+        settingsButton.setStyleSheet(
+            """
+            QPushButton { border-radius: 25px; background-color: #f0f0f0; border: none; }
+            QPushButton:hover { background-color: #e0e0e0; }
+        """
+        )
+        settingsButton.setFixedSize(50, 50)
+        settingsButton.clicked.connect(self.openSettingsMenu)
+        return settingsButton
+
+    def _createInputLayout(self):
+        inputLayout = QtWidgets.QHBoxLayout()
+        self.lineEdit = QtWidgets.QLineEdit()
+        self.lineEdit.setObjectName("lineEdit")
+        inputLayout.addWidget(self.lineEdit)
+        self.addTaskButton = QtWidgets.QPushButton("Add Task")
+        self.addTaskButton.setObjectName("addTaskButton")
+        inputLayout.addWidget(self.addTaskButton)
+        return inputLayout
+
+    def _createTaskListLayout(self):
+        taskListLayout = QtWidgets.QVBoxLayout()
+        self.label = QtWidgets.QLabel("Task List")
+        self.label.setObjectName("label")
+        taskListLayout.addWidget(self.label)
+        self.taskList = QtWidgets.QListWidget()
+        self.taskList.setObjectName("taskList")
+        taskListLayout.addWidget(self.taskList)
+        return taskListLayout
+
+    def _createStatusLayout(self):
+        statusLayout = QtWidgets.QHBoxLayout()
+        self.statusComboBox = QtWidgets.QComboBox()
+        self.statusComboBox.setObjectName("statusComboBox")
+        self.statusComboBox.addItem("Pending")
+        self.statusComboBox.addItem("Completed")
+        statusLayout.addWidget(self.statusComboBox)
+        self.label_2 = QtWidgets.QLabel()
+        self.label_2.setObjectName("label_2")
+        statusLayout.addWidget(self.label_2)
+        return statusLayout
+
     def keyPressEvent(self, event):
-        # Detect Enter key press and prevent it from triggering settings button click
-        if event.key() == QtCore.Qt.Key_Return or event.key() == QtCore.Qt.Key_Enter:
-            # Prevent Enter key from triggering settings button
-            event.accept()  # Consume the event and stop it from propagating further
+        if event.key() in [QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter]:
+            event.accept()
         else:
-            super().keyPressEvent(event)  # Allow other key presses to pass through
+            super().keyPressEvent(event)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate
@@ -156,7 +159,6 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
         self.allTasks = []  # Store all tasks for search functionality
         self.loadTasks()  # Ensure tasks are loaded when the dialog is created
 
-
     def get_tasks_file_path(self):
         """
         Returns the appropriate path for tasks.json based on the operating system.
@@ -181,8 +183,6 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 
         # Return the full path to tasks.json
         return os.path.join(app_directory, "tasks.json")
-
-
 
     def loadTasks(self):
         tasks = self.loadTasksFromFile()
@@ -229,7 +229,6 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 
         # Reload task list with updated color scheme
         self.loadTasks()
-
 
     def setLightMode(self):
         light_palette = QtGui.QPalette()
@@ -298,7 +297,6 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
                         colors = self.theme_colors[self.current_theme][status]
                         item.setBackground(colors["background"])
                         item.setForeground(colors["foreground"])
-
 
     def keyPressEvent(self, event):
         # Detect Enter key press and prevent it from triggering settings button click
