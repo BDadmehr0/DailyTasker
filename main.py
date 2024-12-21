@@ -132,21 +132,21 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
             "Light": {
                 "Pending": {
                     "background": QtGui.QColor("lightyellow"),
-                    "foreground": QtGui.QColor("black"),
+                    "foreground": QtGui.QColor("darkslategray"),
                 },
                 "Completed": {
                     "background": QtGui.QColor("lightgreen"),
-                    "foreground": QtGui.QColor("black"),
+                    "foreground": QtGui.QColor("darkslategray"),
                 },
             },
             "Dark": {
                 "Pending": {
                     "background": QtGui.QColor(66, 66, 66),
-                    "foreground": QtGui.QColor(255, 165, 0),  # Orange
+                    "foreground": QtGui.QColor(255, 255, 255),  # Orange
                 },
                 "Completed": {
                     "background": QtGui.QColor(34, 139, 34),  # Dark green
-                    "foreground": QtGui.QColor(144, 238, 144),  # Light green
+                    "foreground": QtGui.QColor(255, 255, 255),  # Light green
                 },
             },
         }
