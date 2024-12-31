@@ -1,7 +1,7 @@
 import json
-import sys
-import platform
 import os
+import platform
+import sys
 from datetime import datetime
 
 from PyQt5 import QtCore, QtGui, QtWidgets  # type: ignore
@@ -69,7 +69,7 @@ class Ui_Dialog(object):
             """
             QPushButton { border-radius: 25px; background-color: #f0f0f0; border: none; }
             QPushButton:hover { background-color: #e0e0e0; }
-        """
+            """
         )
         settingsButton.setFixedSize(50, 50)
         settingsButton.clicked.connect(self.openSettingsMenu)
