@@ -77,12 +77,22 @@ class Ui_Dialog(object):
 
     def _createInputLayout(self):
         inputLayout = QtWidgets.QHBoxLayout()
+
+        # Input Field for adding task
         self.lineEdit = QtWidgets.QLineEdit()
         self.lineEdit.setObjectName("lineEdit")
         inputLayout.addWidget(self.lineEdit)
+
+        # Add Task Button
         self.addTaskButton = QtWidgets.QPushButton("Add Task")
         self.addTaskButton.setObjectName("addTaskButton")
         inputLayout.addWidget(self.addTaskButton)
+
+        # Delete Task Button
+        self.deleteTaskButton = QtWidgets.QPushButton("Delete Task")
+        self.deleteTaskButton.setObjectName("deleteTaskButton")
+        inputLayout.addWidget(self.deleteTaskButton)
+
         return inputLayout
 
     def _createTaskListLayout(self):
@@ -268,6 +278,7 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 
     def setupFunctions(self):
         self.addTaskButton.clicked.connect(self.addTask)
+        self.deleteTaskButton.clicked.connect(self.deleteTask)
         self.taskList.itemClicked.connect(self.updateStatusComboBox)
         self.statusComboBox.currentIndexChanged.connect(self.changeTaskStatus)
         self.searchBar.textChanged.connect(self.searchTasks)
@@ -444,6 +455,37 @@ class MainApp(QtWidgets.QDialog, Ui_Dialog):
 
         settings_layout.addWidget(theme_combobox)
         settings_dialog.exec_()
+
+    def deleteTask(self):
+        selected_item = self.taskList.currentItem()
+        if selected_item:
+            task_text = selected_item.text()
+            current_date = datetime.now().strftime("%Y-%m-%d")
+            tasks = self.loadTasksFromFile()
+
+            if current_date in tasks:
+                # remove task is list
+                tasks[current_date] = [
+                    task for task in tasks[current_date] if task["text"] != task_text
+                ]
+
+                # save data to file
+                self.saveTasksToFile(tasks)
+
+                # remove task text in ui
+                self.taskList.takeItem(self.taskList.row(selected_item))
+
+                QtWidgets.QMessageBox.information(
+                    self, "Success", f"Task '{task_text}' deleted successfully!"
+                )
+            else:
+                QtWidgets.QMessageBox.warning(
+                    self, "Error", "No tasks found for today."
+                )
+        else:
+            QtWidgets.QMessageBox.warning(
+                self, "Error", "Please select a task to delete."
+            )
 
 
 if __name__ == "__main__":
