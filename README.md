@@ -1,6 +1,16 @@
+<div align="center">
+    
+<p>
+    <a href="#">
+        <img width="150" src="https://github.com/BDadmehr0/DailyTasker/blob/main/logo.png" alt="onedns Logo">
+    </a>
+</p>
+
 # DailyTasker
 
 DailyTasker is a simple and efficient To-Do list application built with Python and PyQt5. It allows users to create, manage, and track their tasks with ease. The app organizes tasks by date and provides options to mark them as "Pending" or "Completed."
+
+</div>
 
 ## Features
 
