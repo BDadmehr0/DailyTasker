@@ -2,7 +2,7 @@
     
 <p>
     <a href="#">
-        <img width="150" src="https://github.com/BDadmehr0/DailyTasker/blob/main/logo.png" alt="onedns Logo">
+        <img src="https://github.com/BDadmehr0/DailyTasker/blob/main/logo.png" alt="onedns Logo">
     </a>
 </p>
 
